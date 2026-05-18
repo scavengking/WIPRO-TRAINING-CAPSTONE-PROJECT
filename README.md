@@ -90,8 +90,8 @@ project/
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd capstone-project/project1-pom
+git clone https://github.com/scavengking/WIPRO-TRAINING-CAPSTONE-PROJECT
+cd project/project1-pom
 
 # Install dependencies
 npm install
@@ -109,8 +109,7 @@ cp .env.example .env
 # Fill in your values
 BASE_URL=https://practicesoftwaretesting.com
 API_URL=https://api.practicesoftwaretesting.com
-USER_EMAIL=your_test_email@example.com
-USER_PASSWORD=your_test_password
+
 ```
 
 ---
