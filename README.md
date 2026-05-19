@@ -29,7 +29,7 @@ This is a production-grade test automation framework built as part of the **Wipr
 
 ---
 
-## 🏛️ Project Structure
+##  Project Structure
 
 ```
 project/
