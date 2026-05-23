@@ -1,0 +1,13 @@
+{
+  "name": "project1-pom",
+  "version": "1.0.0",
+  "description": "Wipro Capstone Playwright Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

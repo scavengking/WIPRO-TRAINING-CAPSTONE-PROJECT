@@ -1,0 +1,22 @@
+[
+  {
+    "testName": "Valid credentials",
+    "email": "admin@practicesoftwaretesting.com",
+    "password": "welcome01",
+    "expectSuccess": true
+  },
+  {
+    "testName": "Invalid password",
+    "email": "admin@practicesoftwaretesting.com",
+    "password": "wrongpassword123",
+    "expectSuccess": false,
+    "errorMsg": "Invalid email or password"
+  },
+  {
+    "testName": "Empty fields",
+    "email": "",
+    "password": "",
+    "expectSuccess": false,
+    "errorMsg": "Email is required"
+  }
+]
