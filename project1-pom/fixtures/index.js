@@ -5,6 +5,7 @@ import { RegisterPage } from '../pages/RegisterPage.js';
 import { HomePage } from '../pages/HomePage.js'; // <-- 1. Added import
 import { ProductPage } from '../pages/ProductPage.js';
 import {ProfilePage} from '../pages/ProfilePage.js';
+import { CheckoutPage } from '../pages/CheckoutPage.js';
 /**
  * @typedef {object} MyFixtures
  * @property {import('@playwright/test').Page} preparedPage
@@ -13,6 +14,7 @@ import {ProfilePage} from '../pages/ProfilePage.js';
  * @property {HomePage} homePage // <-- 2. Added property for VS Code autocomplete
  * @property {ProductPage} productPage
  * @property {ProfilePage} profilePage
+ * @property {CheckoutPage} checkoutPage
  */
 
 /** @type {import('@playwright/test').TestType<import('@playwright/test').PlaywrightTestArgs & import('@playwright/test').PlaywrightTestOptions & MyFixtures, import('@playwright/test').PlaywrightWorkerArgs & import('@playwright/test').PlaywrightWorkerOptions>} */
@@ -52,6 +54,10 @@ export const test = baseTest.extend({
     profilePage: async ({ preparedPage }, use) => {
         const profilePage = new ProfilePage(preparedPage);
         await use(profilePage);
+    },
+    checkoutPage: async ({ preparedPage }, use) => {
+        const checkoutPage = new CheckoutPage(preparedPage);
+        await use(checkoutPage);
     }
 });
 

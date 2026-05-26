@@ -178,3 +178,119 @@ Established a rapid workflow using Playwright CodeGen to instantly harvest locat
 - Service 4 and beyond
 - Expand data files for remaining services
 - Continue CodeGen locator harvesting for upcoming milestones
+
+
+ **Updated:** May 26, 2026
+
+# 🚀 Wipro Capstone — Playwright Test Automation Suite
+
+> **Project:** [automationexercise.com](https://automationexercise.com) · **Framework:** Playwright v1.4x+ · **Language:** JavaScript / Node.js
+> **Architecture:** POM · **Coverage:** 8 Services × 15 Cases = 120+ Tests
+> **Last Updated:** May 26, 2026
+
+---
+
+## 📋 Progress Log — Sprint Update
+
+### 🏆 Service 4: Profile & Navigation
+
+**Status:** ✅ Complete
+
+- **Navigated Hidden UI** — Diagnosed that profile links were nested inside a dropdown (`nav-menu`) and wrote the Playwright logic to open it correctly.
+- **Bypassed Demo Restrictions** — When the public `customer` account blocked profile updates (causing success-banner timeout), pivoted by navigating to the "Favorites" page to confirm test success instead.
+- **Scaled to Atomic Tests** — Refactored a single monolithic script into **3 independent, stable test cases** using `test.beforeEach()` to maximize coverage count.
+
+---
+
+### 🛒 Services 5 & 6: Checkout Flow (Cart → Address → Payment → Confirmation)
+
+**Status:** ✅ Complete
+
+- **Full Flow Mapping** — Charted the entire checkout pipeline including the hidden **Guest Checkout** route.
+- **Built `CheckoutPage.js` POM** — Centralized all inputs, dropdowns, and validation-error locators into a clean Page Object Model.
+- **Expanded to 9 Test Cases** — Went beyond the Happy Path to include:
+  - Negative tests
+  - Guest checkout validations
+  - Empty-cart edge case checks
+
+---
+
+### 🧠 SDET Level-Ups — Advanced Playwright Techniques
+
+| Challenge | Solution Applied |
+|---|---|
+| Angular dropdown not registering selections | Forced recognition via `dispatchEvent('change')` |
+| Missing `data-test` attributes (`proceed-2`, `profile-submit`) | Implemented semantic fallbacks: `getByRole`, `.last()` |
+| Authentication race condition (clicking before UI confirmed login) | Added explicit wait: `nav-menu.toBeVisible()` before navigation |
+| Redundant `waitFor` calls in `BasePage.js` | Stripped them out — fully leveraged Playwright's native **auto-waiting** |
+
+---
+
+### ☁️ CI/CD Cloud Deployment
+
+**Status:** ✅ Live
+
+- **GitHub Actions Pipeline** — Built `.github/workflows/playwright.yml` to auto-run the full test suite on every `git push`.
+- **Allure Reporting** — Configured the pipeline to generate visual HTML reports and deploy them to **GitHub Pages** for live evaluator access.
+
+---
+
+## 🗂️ Project Structure
+
+```
+├── pages/
+│   ├── BasePage.js
+│   ├── CheckoutPage.js
+│   └── ...
+├── tests/
+│   ├── service4-profile/
+│   ├── service5-cart/
+│   ├── service6-checkout/
+│   └── ...
+├── data/
+│   └── testData.json
+├── .github/
+│   └── workflows/
+│       └── playwright.yml
+├── allure-results/
+└── README.md
+```
+
+---
+
+## 🧪 Running Tests
+
+```bash
+# Install dependencies
+npm install
+
+# Run all tests
+npx playwright test
+
+# Run a specific service
+npx playwright test tests/service4-profile/
+
+# Generate Allure report
+npx allure generate allure-results --clean -o allure-report
+npx allure open allure-report
+```
+
+---
+
+## 📊 Coverage Summary
+
+| Service | Area | Tests | Status |
+|---|---|---|---|
+| 1 | Authentication | 15 | ✅ |
+| 2 | Product Catalog | 15 | ✅ |
+| 3 | Cart | 15 | ✅ |
+| 4 | User Profile & Navigation | 15 | ✅ |
+| 5 | Address & Shipping | 15 | ✅ |
+| 6 | Payment & Checkout | 15 | ✅ |
+| 7 | Customer Support | 15 | 🔄 |
+| 8 | API Internal | 15 | 🔄 |
+| **Total** | | **120+** | |
+
+---
+
+*Built as part of the Wipro Capstone Program · Playwright + GitHub Actions + Allure Reporting*

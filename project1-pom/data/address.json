@@ -1,0 +1,11 @@
+[
+  {
+    "testName": "Valid US Address",
+    "street": "Thurman Field",
+    "city": "East Lonport",
+    "state": "New Hampshire",
+    "postalCode": "211019",
+    "houseNumber": "42",
+    "countryCode": "US" 
+  }
+]

@@ -1,4 +1,4 @@
-
+// @ts-check
 import { expect } from '@playwright/test';
 
 export class BasePage {
@@ -10,6 +10,7 @@ export class BasePage {
     }
 
     /**
+     * Navigates to a specific relative path using the Base URL
      * @param {string} path
      */
     async navigate(path) {
@@ -17,21 +18,21 @@ export class BasePage {
     }
 
     /**
-     * A reusable method to wait for an element and click it
+     * A reusable method to click an element cleanly
+     * Playwright automatically waits for the element to be visible and actionable
      * @param {import('@playwright/test').Locator} locator
      */
     async clickElement(locator) {
-        await locator.waitFor({ state: 'visible' });
         await locator.click();
     }
 
     /**
      * A reusable method to fill inputs cleanly
+     * Playwright automatically waits for the input to be visible and ready
      * @param {import('@playwright/test').Locator} locator
      * @param {string} text
      */
     async fillInput(locator, text) {
-        await locator.waitFor({ state: 'visible' });
         await locator.fill(text);
     }
 }
