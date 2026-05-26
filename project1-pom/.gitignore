@@ -1,0 +1,10 @@
+CAPSTONE_MASTER_PLAN.md
+node_modules/
+allure-results/
+allure-report/
+playwright-report/
+test-results/
+allure-results/
+allure-report/
+.env/
+.env.example/
