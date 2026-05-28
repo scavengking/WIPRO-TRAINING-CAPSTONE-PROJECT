@@ -2,46 +2,42 @@
 import { test as setup, expect } from '@playwright/test';
 
 const authFile = 'playwright/.auth/user.json';
-const API_BASE = 'https://api.practicesoftwaretesting.com';
+const API_BASE  = 'https://api.practicesoftwaretesting.com';
 const SITE_BASE = 'https://practicesoftwaretesting.com';
 
 setup('authenticate via API to bypass Cloudflare', async ({ page, request }) => {
-  const email = process.env.CUSTOMER_EMAIL ?? 'admin@practicesoftwaretesting.com';
-  const password = process.env.CUSTOMER_PASSWORD ?? 'welcome01';
 
-  console.log('Sending login request directly to backend API...');
+    // Using '||' to safely fallback if GitHub Actions injects an empty string
+    const email    = process.env.CUSTOMER_EMAIL    || 'customer@practicesoftwaretesting.com';
+    const password = process.env.CUSTOMER_PASSWORD || 'welcome01';
 
-  // 1. Hit the backend API directly (Bypasses Cloudflare UI challenge)
-  const response = await request.post(`${API_BASE}/users/login`, {
-    data: {
-      email: email,
-      password: password
-    }
-  });
+    console.log(`Sending login request directly to backend API for: ${email}`);
 
-  // Verify the API gave us a 200 OK success response
-  expect(response.status(), `API Login failed with status: ${response.status()}`).toBe(200);
+    // Hitting the correct backend endpoint
+    const response = await request.post(`${API_BASE}/users/login`, {
+        data: { email, password },
+    });
 
-  // Extract the JWT authentication token from the response
-  const responseBody = await response.json();
-  const token = responseBody.access_token;
-  expect(token, 'No access_token found in API response').toBeTruthy();
+    expect(
+        response.status(),
+        `API Login failed for ${email} with status: ${response.status()}`
+    ).toBe(200);
 
-  console.log('API Login successful! Injecting token into browser...');
+    const responseBody = await response.json();
+    const token = responseBody.access_token;
+    expect(token, 'No access_token found in API response').toBeTruthy();
 
-  // 2. Navigate to the base site just to establish the domain origin
-  await page.goto(SITE_BASE);
+    console.log('API Login successful! Injecting token into browser...');
 
-  // 3. Inject the token into localStorage so the Angular app thinks we manually logged in
-  await page.evaluate((jwt) => {
-    localStorage.setItem('access_token', jwt);
-  }, token);
+    await page.goto(SITE_BASE);
 
-  // Wait a brief moment to ensure localStorage is registered
-  await page.waitForTimeout(500);
+    await page.evaluate((jwt) => {
+        localStorage.setItem('access_token', jwt);
+    }, token);
 
-  // 4. Save the state for all other tests to use
-  await page.context().storageState({ path: authFile });
-  
-  console.log(`✅ Session saved successfully to ${authFile}!`);
+    await page.waitForTimeout(500);
+
+    await page.context().storageState({ path: authFile });
+
+    console.log(`✅ Session saved successfully to ${authFile}!`);
 });
