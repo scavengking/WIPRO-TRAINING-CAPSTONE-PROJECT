@@ -1,0 +1,89 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: 03-cart.spec.js >> Service 3 - Cart State & Management >> TC02 - Increase quantity before adding to cart updates badge correctly
+- Location: tests/03-cart.spec.js:22:9
+
+# Error details
+
+```
+Test timeout of 45000ms exceeded.
+```
+
+```
+Error: locator.click: Test timeout of 45000ms exceeded.
+Call log:
+  - waiting for getByTestId('product-name').first()
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - img "Icon for practicesoftwaretesting.com" [ref=e5]
+        - heading "practicesoftwaretesting.com" [level=1] [ref=e6]
+      - heading "Performing security verification" [level=2] [ref=e7]
+      - paragraph [ref=e8]: This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.
+  - contentinfo [ref=e12]:
+    - generic [ref=e14]:
+      - generic [ref=e16]:
+        - text: "Ray ID:"
+        - code [ref=e17]: a02cb99e69cb2b19
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - text: Performance and Security by
+          - link "Cloudflare" [ref=e20] [cursor=pointer]:
+            - /url: https://www.cloudflare.com?utm_source=challenge&utm_campaign=m
+        - link "Privacy" [ref=e22] [cursor=pointer]:
+          - /url: https://www.cloudflare.com/privacypolicy/
+```
+
+# Test source
+
+```ts
+  1  | 
+  2  | import { test, expect } from '../fixtures/index.js';
+  3  | 
+  4  | test.describe('Service 3 - Cart State & Management', () => {
+  5  | 
+  6  |     // Can be run as guest or logged in, default (logged-in) is fine!
+  7  |     
+  8  |     // FIX: Must navigate to home page first
+  9  |     test.beforeEach(async ({ homePage }) => {
+  10 |         await homePage.goTo();
+  11 |     });
+  12 | 
+  13 |     test('TC01 - Add product to cart and verify dynamic badge update', async ({ homePage, productPage }) => {
+  14 |         await homePage.productNames.first().click();
+  15 |         await productPage.clickAddToCart();
+  16 |         
+  17 |         const badgeCount = await productPage.getCartBadgeCount();
+  18 |         expect(badgeCount).toBe(1);
+  19 |     });
+  20 | 
+  21 |     // ── NEW: Quantity Adjustment Test ──
+  22 |     test('TC02 - Increase quantity before adding to cart updates badge correctly', async ({ homePage, productPage }) => {
+> 23 |         await homePage.productNames.first().click();
+     |                                             ^ Error: locator.click: Test timeout of 45000ms exceeded.
+  24 |         
+  25 |         // Click the + button twice (Total quantity = 3)
+  26 |         await productPage.increaseQtyButton.click();
+  27 |         await productPage.increaseQtyButton.click();
+  28 |         
+  29 |         await productPage.clickAddToCart();
+  30 |         
+  31 |         const badgeCount = await productPage.getCartBadgeCount();
+  32 |         expect(badgeCount).toBe(3);
+  33 |     });
+  34 | 
+  35 | });
+```

@@ -1,0 +1,184 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: 07-invoices.spec.js >> Service 08 — Invoices & Account Management (Logged-In) >> TC_08_04 — Invoices navigation link is visible on the account page
+- Location: tests/07-invoices.spec.js:33:9
+
+# Error details
+
+```
+Test timeout of 45000ms exceeded.
+```
+
+```
+Error: locator.click: Test timeout of 45000ms exceeded.
+Call log:
+  - waiting for getByTestId('nav-menu')
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - img "Icon for practicesoftwaretesting.com" [ref=e5]
+        - heading "practicesoftwaretesting.com" [level=1] [ref=e6]
+      - heading "Performing security verification" [level=2] [ref=e7]
+      - paragraph [ref=e8]: This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.
+  - contentinfo [ref=e12]:
+    - generic [ref=e14]:
+      - generic [ref=e16]:
+        - text: "Ray ID:"
+        - code [ref=e17]: a02cc9c3fbd7270a
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - text: Performance and Security by
+          - link "Cloudflare" [ref=e20] [cursor=pointer]:
+            - /url: https://www.cloudflare.com?utm_source=challenge&utm_campaign=m
+        - link "Privacy" [ref=e22] [cursor=pointer]:
+          - /url: https://www.cloudflare.com/privacypolicy/
+```
+
+# Test source
+
+```ts
+  1   | 
+  2   | import { test, expect } from '../fixtures/index.js';
+  3   | 
+  4   | // ─────────────────────────────────────────────────────────────────────────────
+  5   | test.describe('Service 08 — Invoices & Account Management (Logged-In)', () => {
+  6   | 
+  7   |     // ── Global Setup handles authentication automatically! ──
+  8   |     // All we need to do is go to the home page before each test.
+  9   |    test.beforeEach(async ({ accountPage }) => {
+  10  |         await accountPage.navigate('/');
+  11  |         await accountPage.page.waitForLoadState('load'); // Swapped from networkidle
+  12  |     });
+  13  | 
+  14  |     // ── TC_08_01: User menu is visible after login ────────────────────────────
+  15  |     test('TC_08_01 — User nav-menu button is visible after successful login', async ({ accountPage }) => {
+  16  |         await expect(accountPage.navMenu).toBeVisible();
+  17  |     });
+  18  | 
+  19  |     // ── TC_08_02: Opening user menu reveals "My Account" link ────────────────
+  20  |     test('TC_08_02 — Clicking user menu reveals the "My account" dropdown link', async ({ accountPage }) => {
+  21  |         await accountPage.navMenu.click();
+  22  |         await expect(accountPage.myAccountLink).toBeVisible();
+  23  |     });
+  24  | 
+  25  |     // ── TC_08_03: "My Account" link navigates to account page ────────────────
+  26  |     test('TC_08_03 — "My account" link navigates to /account', async ({ accountPage }) => {
+  27  |         await accountPage.navMenu.click();
+  28  |         await accountPage.myAccountLink.click();
+  29  |         await expect(accountPage.page).toHaveURL(/\/account/);
+  30  |     });
+  31  | 
+  32  |     // ── TC_08_04: Invoices nav link is visible on account page ───────────────
+  33  |     test('TC_08_04 — Invoices navigation link is visible on the account page', async ({ accountPage }) => {
+> 34  |         await accountPage.navMenu.click();
+      |                                   ^ Error: locator.click: Test timeout of 45000ms exceeded.
+  35  |         await accountPage.myAccountLink.click();
+  36  |         await expect(accountPage.invoicesNav).toBeVisible();
+  37  |     });
+  38  | 
+  39  |     // ── TC_08_05: Clicking Invoices navigates to the invoices list ────────────
+  40  |     test('TC_08_05 — Clicking Invoices navigates to /account/invoices', async ({ accountPage }) => {
+  41  |         await accountPage.navigateToInvoices();
+  42  |         await expect(accountPage.page).toHaveURL(/\/account\/invoices/);
+  43  |     });
+  44  | 
+  45  |     // ── TC_08_06: Invoice list page URL is exactly /account/invoices ─────────
+  46  |     test('TC_08_06 — Invoices page URL path matches /account/invoices exactly', async ({ accountPage }) => {
+  47  |         await accountPage.navigateToInvoices();
+  48  |         const url = accountPage.page.url();
+  49  |         expect(url).toMatch(/\/account\/invoices$/);
+  50  |     });
+  51  | 
+  52  |     // ── TC_08_07: At least one invoice record is visible ─────────────────────
+  53  |     test('TC_08_07 — Invoice list displays at least one invoice record', async ({ accountPage }) => {
+  54  |         await accountPage.navigateToInvoices();
+  55  |         const count = await accountPage.getInvoiceCount();
+  56  |         expect(count).toBeGreaterThanOrEqual(1);
+  57  |     });
+  58  | 
+  59  |     // ── TC_08_08: Invoice rows show an INV- prefixed ID ───────────────────────
+  60  |     test('TC_08_08 — First invoice record shows an INV- prefixed invoice ID', async ({ accountPage }) => {
+  61  |         await accountPage.navigateToInvoices();
+  62  |         const id = await accountPage.getFirstInvoiceId();
+  63  |         expect(id?.trim()).toMatch(/^INV-/);
+  64  |     });
+  65  | 
+  66  |     // ── TC_08_09: Each invoice row has a "Details" button ────────────────────
+  67  |     test('TC_08_09 — Every invoice row has a visible "Details" button', async ({ accountPage }) => {
+  68  |         await accountPage.navigateToInvoices();
+  69  |         const rowCount     = await accountPage.getInvoiceCount();
+  70  |         const buttonCount  = await accountPage.allDetailsButtons.count();
+  71  |         expect(buttonCount).toBe(rowCount);
+  72  |     });
+  73  | 
+  74  |     // ── TC_08_10: "Details" button navigates to invoice detail page ───────────
+  75  |     test('TC_08_10 — Clicking "Details" on the first invoice navigates to its detail page', async ({ accountPage }) => {
+  76  |         await accountPage.navigateToInvoices();
+  77  |         await accountPage.openFirstInvoiceDetails();
+  78  |         await expect(accountPage.page).toHaveURL(/\/account\/invoices\/.+/);
+  79  |     });
+  80  | 
+  81  |     // ── TC_08_11: Invoice detail URL contains a non-empty ID segment ──────────
+  82  |     test('TC_08_11 — Invoice detail page URL contains a non-empty invoice ID segment', async ({ accountPage }) => {
+  83  |         await accountPage.navigateToInvoices();
+  84  |         await accountPage.openFirstInvoiceDetails();
+  85  |         const url = accountPage.page.url();
+  86  |         // URL format: /account/invoices/<ULID>
+  87  |         const segments = url.split('/');
+  88  |         const idSegment = segments[segments.length - 1];
+  89  |         expect(idSegment.length).toBeGreaterThan(0);
+  90  |     });
+  91  | 
+  92  |     // ── TC_08_12: Invoice detail page shows an INV- reference ────────────────
+  93  |     test('TC_08_12 — Invoice detail page displays an INV- prefixed reference', async ({ accountPage }) => {
+  94  |         await accountPage.navigateToInvoices();
+  95  |         await accountPage.openFirstInvoiceDetails();
+  96  |         await expect(accountPage.invoiceIdCell).toBeVisible({ timeout: 8000 });
+  97  |         const id = await accountPage.invoiceIdCell.textContent();
+  98  |         expect(id?.trim()).toMatch(/^INV-/);
+  99  |     });
+  100 | 
+  101 |     // ── TC_08_13: "Download PDF" button is visible on detail page ────────────
+  102 |     test('TC_08_13 — "Download PDF" button is visible on the invoice detail page', async ({ accountPage }) => {
+  103 |         await accountPage.navigateToInvoices();
+  104 |         await accountPage.openFirstInvoiceDetails();
+  105 |         await expect(accountPage.downloadPdfButton).toBeVisible({ timeout: 8000 });
+  106 |     });
+  107 | 
+  108 |     // ── TC_08_14: "Download PDF" button text is correct ──────────────────────
+  109 |     test('TC_08_14 — "Download PDF" button displays the correct label text', async ({ accountPage }) => {
+  110 |         await accountPage.navigateToInvoices();
+  111 |         await accountPage.openFirstInvoiceDetails();
+  112 |         await expect(accountPage.downloadPdfButton).toContainText('Download', { timeout: 8000 });
+  113 |     });
+  114 | 
+  115 |     // ── TC_08_15: "Download PDF" initiates a file download ───────────────────
+  116 |     test('TC_08_15 — Clicking "Download PDF" initiates a PDF file download', async ({ accountPage }) => {
+  117 |         await accountPage.navigateToInvoices();
+  118 |         await accountPage.openFirstInvoiceDetails();
+  119 | 
+  120 |         // Playwright's download event listener must be registered BEFORE the click
+  121 |         const [download] = await Promise.all([
+  122 |             accountPage.page.waitForEvent('download', { timeout: 15000 }),
+  123 |             accountPage.downloadPdfButton.click(),
+  124 |         ]);
+  125 | 
+  126 |         // Verify a download was triggered and the filename looks like a PDF
+  127 |         expect(download).toBeTruthy();
+  128 |     });
+  129 | 
+  130 | });
+```
