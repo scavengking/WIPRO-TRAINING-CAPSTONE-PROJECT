@@ -72,6 +72,12 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    - name: Setup Java (Required for Allure)
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -88,9 +94,6 @@ jobs:
         pattern: allure-results-shard-*
         merge-multiple: true
         path: project1-pom/allure-results
-
-    - name: Ensure Allure Results Directory
-      run: mkdir -p allure-results
 
     - name: Generate Allure Report
       run: npm run allure:generate
