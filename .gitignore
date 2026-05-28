@@ -6,3 +6,9 @@ playwright-report/
 test-results/
 allure-results/
 allure-report/
+# Playwright Auth State
+playwright/.auth/
+.env
+.env.example
+# Playwright Auth State
+**/.auth/

@@ -43,6 +43,11 @@ export class CheckoutPage extends BasePage {
         this.paymentMethodSelect = page.getByTestId('payment-method');
         this.finishButton        = page.getByTestId('finish');
 
+        // ── Bank Details Form Fields (Dynamic based on payment method) ───────
+        this.bankNameInput      = page.getByTestId('bank_name');
+        this.accountNameInput   = page.getByTestId('account_name');
+        this.accountNumberInput = page.getByTestId('account_number');
+
         // ── Success Messages ─────────────────────────────────────────────────
         this.paymentSuccessMessage = page.getByTestId('payment-success-message');
 
@@ -51,6 +56,7 @@ export class CheckoutPage extends BasePage {
         this.emailRequiredError     = page.getByText('Email is required');
         this.firstNameRequiredError = page.getByText('First name is required');
         this.lastNameRequiredError  = page.getByText('Last name is required');
+        this.accountNumberError     = page.getByText('Account number must be numeric', { exact: false });
     }
 
     // ── Page Actions ─────────────────────────────────────────────────────────
@@ -82,6 +88,18 @@ export class CheckoutPage extends BasePage {
         await this.fillInput(this.guestFirstNameInput, firstName);
         await this.fillInput(this.guestLastNameInput, lastName);
         await this.clickElement(this.guestSubmitButton);
+    }
+
+    /**
+     * Fill the bank details form dynamically shown for bank-transfer.
+     * @param {string} bankName 
+     * @param {string} accountName 
+     * @param {string} accountNumber 
+     */
+    async fillBankDetails(bankName, accountName, accountNumber) {
+        await this.fillInput(this.bankNameInput, bankName);
+        await this.fillInput(this.accountNameInput, accountName);
+        await this.fillInput(this.accountNumberInput, accountNumber);
     }
 
     /**

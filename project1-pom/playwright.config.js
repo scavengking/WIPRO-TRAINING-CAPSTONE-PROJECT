@@ -1,4 +1,4 @@
-// project1-pom/playwright.config.js
+// playwright.config.js
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -7,8 +7,9 @@ import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({
+  timeout: 45000,
   testDir: './tests',
-  fullyParallel: true,
+  fullyParallel: true, // You get your parallel workers back!
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 4 : undefined,
@@ -25,8 +26,35 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit',   use: { ...devices['Desktop Safari'] } },
+    // 1. Run the setup project first to grab the login session
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.js/,
+    },
+    // 2. Main testing projects depend on setup and use the saved session
+    {
+      name: 'chromium',
+      use: { 
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json', 
+      },
+      dependencies: ['setup'],
+    },
+    { 
+      name: 'firefox',  
+      use: { 
+        ...devices['Desktop Firefox'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
+    },
+    { 
+      name: 'webkit',   
+      use: { 
+        ...devices['Desktop Safari'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
+    },
   ],
 });
