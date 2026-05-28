@@ -1,0 +1,161 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: 05-checkout.spec.js >> Service 6 - Checkout Suite (Logged-In) >> TC16_Pos - Cart badge shows item count after adding product
+- Location: tests/05-checkout.spec.js:169:9
+
+# Error details
+
+```
+Test timeout of 45000ms exceeded.
+```
+
+```
+Error: locator.click: Test timeout of 45000ms exceeded.
+Call log:
+  - waiting for getByTestId('product-name').first()
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - img "Icon for practicesoftwaretesting.com" [ref=e5]
+        - heading "practicesoftwaretesting.com" [level=1] [ref=e6]
+      - heading "Performing security verification" [level=2] [ref=e7]
+      - paragraph [ref=e8]: This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.
+  - contentinfo [ref=e12]:
+    - generic [ref=e14]:
+      - generic [ref=e16]:
+        - text: "Ray ID:"
+        - code [ref=e17]: a02c1e7e8d79303f
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - text: Performance and Security by
+          - link "Cloudflare" [ref=e20] [cursor=pointer]:
+            - /url: https://www.cloudflare.com?utm_source=challenge&utm_campaign=m
+        - link "Privacy" [ref=e22] [cursor=pointer]:
+          - /url: https://www.cloudflare.com/privacypolicy/
+```
+
+# Test source
+
+```ts
+  72  |         await addToCartAndProceedStep1(homePage, productPage, checkoutPage);
+  73  |         
+  74  |         await checkoutPage.continueAsGuest();
+  75  |         await checkoutPage.clickElement(checkoutPage.proceedStep2);
+  76  |         await checkoutPage.fillAddress(address);
+  77  |         await checkoutPage.clickElement(checkoutPage.proceedStep3);
+  78  | 
+  79  |         await checkoutPage.paymentMethodSelect.selectOption('bank-transfer');
+  80  |         await checkoutPage.paymentMethodSelect.dispatchEvent('change');
+  81  | 
+  82  |         // Pass invalid alphabetical characters into the account number field
+  83  |         await checkoutPage.fillBankDetails('Global Test Bank', 'John Doe', 'ABCDEFGHIJ');
+  84  |         
+  85  |         // Trigger Angular's validation by clicking away (blurring) or attempting to submit
+  86  |         await checkoutPage.accountNumberInput.blur();
+  87  | 
+  88  |         // Assert that the specific numeric error message appears
+  89  |         await expect(checkoutPage.accountNumberError).toBeVisible();
+  90  | 
+  91  |         // FIX: Assert that the application correctly prevents submission by disabling the button
+  92  |         await expect(checkoutPage.finishButton).toBeDisabled();
+  93  |     });
+  94  |     
+  95  | 
+  96  |     test('TC11_Neg - Confirm button is disabled when no payment method selected', async ({
+  97  |         homePage, productPage, checkoutPage
+  98  |     }) => {
+  99  |         await addToCartAndProceedStep1(homePage, productPage, checkoutPage);
+  100 |         await checkoutPage.continueAsGuest();
+  101 |         await checkoutPage.clickElement(checkoutPage.proceedStep2);
+  102 |         await checkoutPage.fillAddress(address);
+  103 |         await checkoutPage.clickElement(checkoutPage.proceedStep3);
+  104 | 
+  105 |         await expect(checkoutPage.finishButton).toBeDisabled();
+  106 |     });
+  107 | 
+  108 |     test('TC12_Neg - Guest form shows all required field errors when empty', async ({
+  109 |         homePage, productPage, checkoutPage
+  110 |     }) => {
+  111 |         await addToCartAndProceedStep1(homePage, productPage, checkoutPage);
+  112 |         await checkoutPage.clickElement(checkoutPage.guestTab);
+  113 |         await checkoutPage.clickElement(checkoutPage.guestSubmitButton);
+  114 | 
+  115 |         await expect(checkoutPage.emailRequiredError).toBeVisible();
+  116 |         await expect(checkoutPage.firstNameRequiredError).toBeVisible();
+  117 |         await expect(checkoutPage.lastNameRequiredError).toBeVisible();
+  118 |     });
+  119 | 
+  120 |     test('TC17_Neg - Guest form requires names when only email is provided', async ({
+  121 |         homePage, productPage, checkoutPage
+  122 |     }) => {
+  123 |         await addToCartAndProceedStep1(homePage, productPage, checkoutPage);
+  124 |         await checkoutPage.clickElement(checkoutPage.guestTab);
+  125 |         await checkoutPage.fillInput(checkoutPage.guestEmailInput, 'guest@test.com');
+  126 |         await checkoutPage.clickElement(checkoutPage.guestSubmitButton);
+  127 | 
+  128 |         await expect(checkoutPage.firstNameRequiredError).toBeVisible();
+  129 |         await expect(checkoutPage.lastNameRequiredError).toBeVisible();
+  130 |     });
+  131 | });
+  132 | 
+  133 | // ============================================================================
+  134 | // SUITE B: AUTHENTICATED CHECKOUT FLOWS (Logged In)
+  135 | // ============================================================================
+  136 | test.describe('Service 6 - Checkout Suite (Logged-In)', () => {
+  137 | 
+  138 |     // No test.use override here! 
+  139 |     // Playwright will naturally use the cookie from auth.setup.js.
+  140 | 
+  141 |     test.beforeEach(async ({ homePage }) => {
+  142 |         await homePage.goTo();
+  143 |     });
+  144 | 
+  145 |     test('TC10_Auth - Complete E2E Checkout as Logged-In User', async ({
+  146 |         homePage, productPage, checkoutPage
+  147 |     }) => {
+  148 |         await addToCartAndProceedStep1(homePage, productPage, checkoutPage);
+  149 | 
+  150 |         // We are already logged in, so we just click proceed on step 2
+  151 |         await checkoutPage.clickElement(checkoutPage.proceedStep2);
+  152 |         
+  153 |         await checkoutPage.fillAddress(address);
+  154 |         await checkoutPage.clickElement(checkoutPage.proceedStep3);
+  155 |         
+  156 |         await checkoutPage.selectPaymentAndConfirm('cash-on-delivery');
+  157 |         await expect(checkoutPage.paymentSuccessMessage).toBeVisible();
+  158 |     });
+  159 | 
+  160 |     test('TC15_Pos - Logged-in user sees correct message at Step 2', async ({
+  161 |         homePage, productPage, checkoutPage
+  162 |     }) => {
+  163 |         await addToCartAndProceedStep1(homePage, productPage, checkoutPage);
+  164 |         
+  165 |         // "Hello <Name>, you are already logged in. You can proceed to checkout."
+  166 |         await expect(checkoutPage.alreadyLoggedInMsg).toBeVisible();
+  167 |     });
+  168 | 
+  169 |     test('TC16_Pos - Cart badge shows item count after adding product', async ({
+  170 |         homePage, productPage
+  171 |     }) => {
+> 172 |         await homePage.productNames.first().click();
+      |                                             ^ Error: locator.click: Test timeout of 45000ms exceeded.
+  173 |         await productPage.clickAddToCart();
+  174 | 
+  175 |         const cartBadge = homePage.page.locator('[data-test="cart-quantity"]');
+  176 |         await expect(cartBadge).toHaveText('1');
+  177 |     });
+  178 | });
+```

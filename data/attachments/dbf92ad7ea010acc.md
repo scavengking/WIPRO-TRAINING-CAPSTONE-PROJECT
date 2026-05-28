@@ -1,0 +1,92 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: 07-invoices.spec.js >> Service 08 — Invoices & Account Management >> TC_08_04 — Invoices navigation link is visible on the account page
+- Location: tests/07-invoices.spec.js:39:9
+
+# Error details
+
+```
+Test timeout of 45000ms exceeded while running "beforeEach" hook.
+```
+
+```
+Error: locator.fill: Test timeout of 45000ms exceeded.
+Call log:
+  - waiting for getByTestId('email')
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - img "Icon for practicesoftwaretesting.com" [ref=e5]
+        - heading "practicesoftwaretesting.com" [level=1] [ref=e6]
+      - heading "Performing security verification" [level=2] [ref=e7]
+      - paragraph [ref=e8]: This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.
+  - contentinfo [ref=e12]:
+    - generic [ref=e14]:
+      - generic [ref=e16]:
+        - text: "Ray ID:"
+        - code [ref=e17]: a02c2f08897a8ac8
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - text: Performance and Security by
+          - link "Cloudflare" [ref=e20] [cursor=pointer]:
+            - /url: https://www.cloudflare.com?utm_source=challenge&utm_campaign=m
+        - link "Privacy" [ref=e22] [cursor=pointer]:
+          - /url: https://www.cloudflare.com/privacypolicy/
+```
+
+# Test source
+
+```ts
+  1  | // @ts-check
+  2  | import { expect } from '@playwright/test';
+  3  | 
+  4  | export class BasePage {
+  5  |     /**
+  6  |      * @param {import('@playwright/test').Page} page
+  7  |      */
+  8  |     constructor(page) {
+  9  |         this.page = page;
+  10 |     }
+  11 | 
+  12 |     /**
+  13 |      * Navigates to a specific relative path using the Base URL
+  14 |      * @param {string} path
+  15 |      */
+  16 |     async navigate(path) {
+  17 |         await this.page.goto(path);
+  18 |     }
+  19 | 
+  20 |     /**
+  21 |      * A reusable method to click an element cleanly
+  22 |      * Playwright automatically waits for the element to be visible and actionable
+  23 |      * @param {import('@playwright/test').Locator} locator
+  24 |      */
+  25 |     async clickElement(locator) {
+  26 |         await locator.click();
+  27 |     }
+  28 | 
+  29 |     /**
+  30 |      * A reusable method to fill inputs cleanly
+  31 |      * Playwright automatically waits for the input to be visible and ready
+  32 |      * @param {import('@playwright/test').Locator} locator
+  33 |      * @param {string} text
+  34 |      */
+  35 |     async fillInput(locator, text) {
+> 36 |         await locator.fill(text);
+     |                       ^ Error: locator.fill: Test timeout of 45000ms exceeded.
+  37 |     }
+  38 | }
+```
