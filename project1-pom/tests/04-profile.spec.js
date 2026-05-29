@@ -46,12 +46,16 @@ test.describe('Service 4 - User Profile & Navigation (Logged-In)', () => {
     });
 
     // 🧪 TEST 5: The Profile Update 
+    // 🧪 TEST 5: The Profile Update 
     test('TC_05 - Update first name and last name successfully', async ({ profilePage, page }) => {
-        // Navigate to the profile page first
         await page.getByTestId('nav-menu').click();
         await page.getByText(/Profile/i).click(); 
         
-        // Use your POM method!
+        // 🛡️ THE FIX: Wait for Angular to load the default data from the DB first!
+        // We wait for the input to NOT be empty before we try typing over it.
+        await expect(profilePage.firstNameInput).not.toBeEmpty({ timeout: 10000 });
+        
+        // Now it is safe to type!
         await profilePage.updateProfile(newProfile.firstName, newProfile.lastName, newProfile.phone);
         
         // Assert the inputs actually hold the new data

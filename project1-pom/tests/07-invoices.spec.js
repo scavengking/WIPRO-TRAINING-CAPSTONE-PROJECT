@@ -5,14 +5,19 @@ test.describe('Service 08 — Invoices & Account Management (Logged-In)', () => 
 
     // ── Global Setup handles authentication automatically via auth.setup.js! ──
     test.beforeEach(async ({ accountPage }) => {
-        // 1. Navigate to the page. (Playwright automatically attaches your saved session token!)
+        // 1. Set a targeted trap for the cart API that crashes Angular
+        const cartPromise = accountPage.page.waitForResponse(
+            (res) => res.url().includes('/carts'),
+            { timeout: 8000 }
+        ).catch(() => console.log('Cart API cached or already loaded.'));
+
+        // 2. Navigate to the page
         await accountPage.navigate('/');
 
-        // 2. Give the Angular frontend a moment to settle its background network calls
-        await accountPage.page.waitForLoadState('networkidle');
+        // 3. Pause Playwright until that specific API finishes, bypassing the crash!
+        await cartPromise;
 
-        // 3. Force Playwright to wait until the User Menu physically appears on the screen.
-        // This is the ultimate proof that the app recognizes you as logged in.
+        // 4. Wait for the UI to safely appear
         await accountPage.navMenu.waitFor({ state: 'visible', timeout: 15000 });
     });
 

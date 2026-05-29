@@ -21,7 +21,9 @@ export class CheckoutPage extends BasePage {
 
         // ── Step 2 – Auth State Messages ─────────────────────────────────────
         // Exact text from site: "Hello John Doe, you are already logged in. You can proceed to checkout."
-        this.alreadyLoggedInMsg = page.getByText('already logged in', { exact: false });
+        // this.alreadyLoggedInMsg = page.getByText('already logged in', { exact: false });
+        // ✅ THE BULLETPROOF FIX:
+         this.alreadyLoggedInMsg = page.getByText(/Hello .*, you are already logged in/i);  
 
         // ── Guest Checkout Elements ──────────────────────────────────────────
         this.guestTab            = page.getByRole('tab', { name: 'Continue as Guest' });

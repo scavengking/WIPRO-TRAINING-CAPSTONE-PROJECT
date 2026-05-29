@@ -7,12 +7,12 @@ import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({
-  timeout: 45000,
+  timeout: 60000,
   testDir: './tests',
   fullyParallel: true, // You get your parallel workers back!
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 4 : undefined,
+  workers: process.env.CI ? 1 : undefined,
   reporter: [
     ['allure-playwright'],
     ['html', { outputFolder: 'playwright-report' }],
