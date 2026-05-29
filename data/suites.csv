@@ -1,4 +1,4 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","10750","TC - Login: Empty fields","chromium","2026-05-23","passed","2026-05-23","Service 1 - Authentication","01-auth.spec.js","",""
-"","10359","TC - Login: Invalid password","chromium","2026-05-23","passed","2026-05-23","Service 1 - Authentication","01-auth.spec.js","",""
 "","12188","TC - Login: Valid credentials","chromium","2026-05-23","passed","2026-05-23","Service 1 - Authentication","01-auth.spec.js","",""
+"","10359","TC - Login: Invalid password","chromium","2026-05-23","passed","2026-05-23","Service 1 - Authentication","01-auth.spec.js","",""
+"","10750","TC - Login: Empty fields","chromium","2026-05-23","passed","2026-05-23","Service 1 - Authentication","01-auth.spec.js","",""
