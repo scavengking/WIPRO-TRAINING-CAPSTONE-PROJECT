@@ -42,3 +42,7 @@ setup('authenticate via API to bypass Cloudflare', async ({ page, request }) => 
 
     console.log(`✅ Session saved successfully to ${authFile}!`);
 });
+
+
+
+// trigger CI
