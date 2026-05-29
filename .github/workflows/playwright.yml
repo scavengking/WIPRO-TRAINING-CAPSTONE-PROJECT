@@ -41,6 +41,10 @@ jobs:
       - name: Install Playwright Chromium Browser
         run: npx playwright install chromium --with-deps
 
+      - name: Clean up old Allure results
+        run: rm -rf allure-results playwright-report
+        shell: bash
+
       # Run all tests at once (fullyParallel in config handles the speed)
       - name: Run Playwright Tests
         run: npm run test:ci -- --project=chromium
