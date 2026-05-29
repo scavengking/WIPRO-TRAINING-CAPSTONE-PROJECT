@@ -41,12 +41,6 @@ jobs:
       - name: Install Playwright Chromium Browser
         run: npx playwright install chromium --with-deps
 
-      - name: Clean up old Allure results
-        run: |
-          if (Test-Path allure-results) { Remove-Item -Recurse -Force allure-results }
-          if (Test-Path playwright-report) { Remove-Item -Recurse -Force playwright-report }
-        shell: pwsh
-
       - name: Run Playwright Tests
         run: npm run test:ci -- --project=chromium
         continue-on-error: true
