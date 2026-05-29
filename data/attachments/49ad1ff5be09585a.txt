@@ -1,0 +1,2 @@
+Performing native UI Login for: customer@practicesoftwaretesting.com
+✅ Native UI Session saved successfully to playwright/.auth/user.json!
